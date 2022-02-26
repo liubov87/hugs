@@ -30,7 +30,7 @@ Latest configuration options:
       Default: 10
     -th, -threads
       Number of threads to use
-      Default: 220
+      Default: 100
     -t, -time
       How long to perform hugs (in minutes). Leave at 0 to never stop hugging
       Default: 0
