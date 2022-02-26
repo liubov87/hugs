@@ -29,7 +29,9 @@ Latest configuration options:
       Number of sockets to use per receiver
       Default: 10
     -th, -threads
-      Number of threads to use
+      Number of threads to use. It is safe to use many threads (more than CPU 
+      cores) in this app, since it is IO bound. Feel free to crank it up a 
+      notch 
       Default: 100
     -t, -time
       How long to perform hugs (in minutes). Leave at 0 to never stop hugging
