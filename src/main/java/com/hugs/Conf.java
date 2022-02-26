@@ -16,14 +16,15 @@ public class Conf {
     private String receiver;// = "https://news.ru/";
 
     @Parameter(names = { "-rs", "-receivers" }, description = "URL or file path to the list of targets to hug")
-    private String receivers = "https://raw.githubusercontent.com/david-l-books/storage/main/urls.txt";
-//    private String receivers = "urls.txt";
+    private String receivers = "https://raw.githubusercontent.com/david-l-books/storage/main/urls.txt"; // = "urls.txt";
 
     @Parameter(names = { "-p", "-port" }, description = "Port to knock on")
     private int port = 80;
 
-    @Parameter(names = { "-th", "-threads" }, description = "Number of threads to use")
-    private int threads = Math.max(1, Runtime.getRuntime().availableProcessors() - 2) * 10;
+    @Parameter(names = { "-th", "-threads" }, description = "Number of threads to use. " +
+            "It is safe to use many threads (more than CPU cores) in this app, since it is IO bound. " +
+            "Feel free to crank it up a notch")
+    private int threads = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
 
     @Parameter(names = { "-s", "-sockets" }, description = "Number of sockets to use per receiver")
     private int connections = 10;
