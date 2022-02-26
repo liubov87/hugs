@@ -39,9 +39,13 @@ Latest configuration options:
 ```
 
 # Contribute
-TBD
+If you would like to understand what's going on - read about slow loris. They are such a cute furry little creatures, aren't they? They just want to hug and live peacefully in their habitat. Just don't underestimate them. Hugs can be ... breathtaking.
 
-## For native builds:
+### Build
+Simply run: 
+```./gradlew clean fatJar```
+
+### For native builds:
 Download latest GraalVM for your platform here:
 https://github.com/graalvm/graalvm-ce-builds/releases/tag/vm-22.0.0.2
 
