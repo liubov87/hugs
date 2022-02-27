@@ -41,5 +41,5 @@ public class Conf {
     private boolean hugUnresponsiveReceiver = false;
 
     @Parameter(names = { "-l", "-log" }, description = "log level: trace, debug, info, error")
-    private String logLevel = "debug";
+    private String logLevel = "info";
 }

