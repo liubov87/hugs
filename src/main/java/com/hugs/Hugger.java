@@ -10,6 +10,7 @@ import static com.hugs.UserAgents.AGENTS;
 import static com.hugs.Utils.RND;
 import static com.hugs.Utils.sleep;
 import static java.lang.Math.max;
+import static java.lang.String.format;
 import static java.lang.System.lineSeparator;
 
 public class Hugger implements Runnable {
@@ -25,6 +26,7 @@ public class Hugger implements Runnable {
     private int connections;
     private Socket[] sockets;
     private String[] partialRequests;
+    private String headerTemplate;
 
     private boolean keepHugsIfNoResponse = false;
     private boolean stop = false;
@@ -37,6 +39,7 @@ public class Hugger implements Runnable {
         sockets = new Socket[connections];
         partialRequests = new String[connections];
         keepHugsIfNoResponse = conf.hugUnresponsiveReceiver();
+        headerTemplate = headerTemplate();
     }
 
     @Override
@@ -81,7 +84,7 @@ public class Hugger implements Runnable {
 
     private void createInitialPartialRequest(int index) {
         String agent = AGENTS[RND.nextInt(AGENTS.length)];
-        partialRequests[index] = String.format(headerTemplate(), agent);
+        partialRequests[index] = format(headerTemplate, agent);
         log.trace(partialRequests[index]);
     }
 
