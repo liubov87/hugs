@@ -19,7 +19,6 @@ public class Monitor implements Runnable{
 
     @Override
     public void run() {
-        System.out.println(">>> MONITOR");
         while (!stop) {
             log.info("Active: {}; Completed: {}", executor.getActiveCount(), executor.getCompletedTaskCount());
             sleep(5_000);

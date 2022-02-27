@@ -13,17 +13,19 @@ import lombok.experimental.Accessors;
 public class Conf {
 
     @Parameter(names = { "-r", "-receiver" }, description = "Hug receiver (for one hugger only)")
-    private String receiver;// = "https://news.ru/";
+    private String receiver; // = "https://news.ru/";
 
     @Parameter(names = { "-rs", "-receivers" }, description = "URL or file path to the list of targets to hug")
-    private String receivers = "https://raw.githubusercontent.com/david-l-books/storage/main/urls.txt"; // = "urls.txt";
+//    private String receivers = "https://raw.githubusercontent.com/david-l-books/storage/main/urls.txt";
+    private String receivers = "urls.txt";
 
     @Parameter(names = { "-p", "-port" }, description = "Port to knock on")
     private int port = 80;
 
     @Parameter(names = { "-th", "-threads" }, description = "Number of threads to use. " +
-            "It is safe to use many threads (more than CPU cores) in this app, since it is IO bound. " +
-            "Feel free to crank it up a notch")
+            "It is safe to use many threads (more than CPU cores) in this app, since it is IO bound and threads sleep majoriy of the time. " +
+            "These threads are very cheap, besides OS thread management. Waiting for project Loom and virtual threads to improve it even further." +
+            "Anyway, if you are running this on modern computer feel free to crank it up a notch")
     private int threads = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
 
     @Parameter(names = { "-s", "-sockets" }, description = "Number of sockets to use per receiver")
@@ -37,4 +39,7 @@ public class Conf {
             "Use false to share hugs with more receivers. " +
             "Use true to concentrate on few receivers")
     private boolean hugUnresponsiveReceiver = false;
+
+    @Parameter(names = { "-l", "-log" }, description = "log level: trace, debug, info, error")
+    private String logLevel = "debug";
 }

