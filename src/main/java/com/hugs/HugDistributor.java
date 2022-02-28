@@ -57,7 +57,7 @@ public class HugDistributor {
         if (conf.receiversRefreshPeriodMinutes() > 0) {
             new Thread(() -> {
                 while (!stop) {
-                    tryToRefreshHuggersList(conf);
+                    tryToRefreshHuggersList(conf, executor);
                 }
             }).start();
         }
@@ -74,7 +74,7 @@ public class HugDistributor {
         }
     }
 
-    private static void tryToRefreshHuggersList(Conf conf) {
+    private static void tryToRefreshHuggersList(Conf conf, ThreadPoolExecutor executor) {
         if (System.currentTimeMillis() - lastRefresh < conf.receiversRefreshPeriodMinutes() * 60_000L) {
             sleep(1_000);
             return;
@@ -104,7 +104,10 @@ public class HugDistributor {
             urlToAdd.removeAll(URL_HUGGER_MAP.keySet());
             log.info("Adding new huggers: {}", urlToAdd);
             for (URL url : urlToAdd) {
-                registerHugger(url, new Hugger(url, conf));
+                Hugger hugger = new Hugger(url, conf);
+                registerHugger(url, hugger);
+
+                executor.execute(hugger);
             }
         }
         } catch (Exception e) {
