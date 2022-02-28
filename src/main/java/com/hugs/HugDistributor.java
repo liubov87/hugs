@@ -74,7 +74,7 @@ public class HugDistributor {
 
     private static List<URL> parseHuggerList(Conf conf) throws IOException {
         List<URL> urls = new ArrayList<>();
-        if (conf.receivers() != null && !conf.receivers().isBlank()){
+        if (conf.receivers() != null && !conf.receivers().trim().isEmpty()){
             InputStream is = conf.receivers().startsWith("http") ? new URL(conf.receivers()).openStream() : new FileInputStream(conf.receivers());
             InputStreamReader reader = new InputStreamReader(is);
             try(BufferedReader br = new BufferedReader(reader)){
