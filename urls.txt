@@ -52,7 +52,6 @@ https://lenta.ru/
 https://www.interfax.ru/
 http://www.kommersant.ru/
 http://www.vesti.ru/
-https://tvrain.ru/
 https://ria.ru/
 https://rg.ru/
 http://izvestia.ru/

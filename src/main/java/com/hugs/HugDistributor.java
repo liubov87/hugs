@@ -7,10 +7,12 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 
 import static com.hugs.Utils.sleep;
+import static java.lang.Math.max;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
@@ -25,10 +27,12 @@ public class HugDistributor {
         Thread thread = new Thread(monitor);
         thread.start();
 
-        List<Hugger> huggers = parseHuggerList(conf).stream().parallel()
+        List<Hugger> huggers = extend(parseHuggerList(conf), conf.threads()).stream().parallel()
                 .map(url -> new Hugger(url, conf))
                 .collect(toList());
         huggers.forEach(executor::execute);
+
+        log.info("Extended list:", extend(parseHuggerList(conf), conf.threads()));
 
         // Finish if needed
         if (!conf.hugUnresponsiveReceiver() && conf.timeLimit() > 0) {
@@ -53,6 +57,19 @@ public class HugDistributor {
             executor.shutdownNow();
             Thread.currentThread().interrupt();
         }
+    }
+
+    /**
+     * Extends list of URLs to an amount >= allocated thread count
+     * @param urls - list of target urls
+     * @param threadCount - how many threads do we want
+     * @return
+     */
+    private static List<URL> extend(List<URL> urls, int threadCount) {
+        return Collections.nCopies(threadCount / urls.size() + 1, urls).stream()
+                .flatMap(List::stream)
+                .limit(max(threadCount, urls.size()))
+                .collect(toList());
     }
 
     private static List<URL> parseHuggerList(Conf conf) throws IOException {

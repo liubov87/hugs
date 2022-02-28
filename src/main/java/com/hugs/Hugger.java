@@ -17,8 +17,8 @@ public class Hugger implements Runnable {
 
     private static final Logger log = LogManager.getLogger(Hugger.class);
 
-    private static final int PAUSE_BETWEEN_REQUESTS = 1000;
-    private static final int LONG_PAUSE = 10_000;
+    private static final int PAUSE_BETWEEN_REQUESTS = 2000;
+    private static final int LONG_PAUSE = 60_000;
 
     private URL hugReceiver;
     private int port;
@@ -28,7 +28,7 @@ public class Hugger implements Runnable {
     private String[] partialRequests;
     private String headerTemplate;
 
-    private boolean keepHugsIfNoResponse = false;
+    private boolean keepHugsIfNoResponse;
     private boolean stop = false;
 
     public Hugger(URL hugReceiver, Conf conf) {
