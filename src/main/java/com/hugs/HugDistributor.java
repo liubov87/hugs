@@ -149,7 +149,7 @@ public class HugDistributor {
     private static List<URL> parseHuggerList(Conf conf) throws IOException {
         List<URL> urls;
         String receivers = conf.receivers();
-        if (receivers != null && !receivers.trim().isBlank()) {
+        if (receivers != null && !receivers.trim().isEmpty()) {
             if (receivers.toLowerCase().endsWith(".json")) {
                 urls = getUrlsFromJson(receivers);
             } else {
