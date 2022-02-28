@@ -7,6 +7,9 @@ The easy way for most platforms is downloading and installing prebuilt package h
 Go to *dist* folder and execute:
 ```java -jar hugs-1.0.jar```
 
+Alternatively, launch prebuilt native image:
+```./hugs```
+
 Application has sensible default configuration, but you may want to change list of hug receivers. To do that - follow the instructions after the launch
 
 Latest configuration options:
@@ -56,8 +59,12 @@ Add the native images and llvm:
 gu install native-image
 gu install llvm-toolchain
 
-Configure for Gradle:
+### Manual native image build:
+```./native-image -jar hugs-1.0.jar hugs```
+
+### Configure for Gradle
 https://docs.gradle.org/7.1.1/userguide/toolchains.html
+
 https://graalvm.github.io/native-build-tools/0.9.4/gradle-plugin.html
 
 sudo apt-get install build-essential libz-dev zlib1g-dev
