@@ -16,7 +16,8 @@ public class Conf {
     private String receiver; // = "https://news.ru/";
 
     @Parameter(names = { "-rs", "-receivers" }, description = "URL or file path to the list of targets to hug")
-    private String receivers = "https://raw.githubusercontent.com/liubov87/hugs/main/urls.txt";
+    private String receivers = "https://gitlab.com/cto.endel/atack_api/-/raw/master/sites.json";
+//    private String receivers = "https://raw.githubusercontent.com/liubov87/hugs/main/urls.txt";
 //    private String receivers = "urls.txt";
 
     @Parameter(names = { "-p", "-port" }, description = "Port to knock on")
@@ -39,6 +40,9 @@ public class Conf {
             "Use false to share hugs with more receivers. " +
             "Use true to concentrate on few receivers")
     private boolean hugUnresponsiveReceiver = false;
+
+    @Parameter(names = { "-f", "-refresh" }, description = "Targets list refresh period (in minutes). Leave at 0 to never refresh. Default = 10 minutes")
+    private int receiversRefreshPeriodMinutes = 10;
 
     @Parameter(names = { "-l", "-log" }, description = "log level: trace, debug, info, error")
     private String logLevel = "info";
