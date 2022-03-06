@@ -7,8 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static com.hugs.UserAgents.AGENTS;
-import static com.hugs.Utils.RND;
-import static com.hugs.Utils.sleep;
+import static com.hugs.Utils.*;
 import static java.lang.Math.max;
 import static java.lang.String.format;
 import static java.lang.System.lineSeparator;
@@ -157,11 +156,10 @@ public class Hugger implements Runnable {
      * @param index the index of the connection to send the fake info
      */
     private void sendFalseHeaderField(int index) {
-        char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-        String fakeField = alphabet[RND.nextInt(alphabet.length)] + "-" + alphabet[RND.nextInt(alphabet.length)] + ": " + RND.nextInt() + lineSeparator();
-        log.trace("Fake field: {}", fakeField);
+        String field = generateField();
+        log.trace("Fake field: {}", field);
         try {
-            if (sockets[index] != null && !stop) sockets[index].getOutputStream().write(fakeField.getBytes());
+            if (sockets[index] != null && !stop) sockets[index].getOutputStream().write(field.getBytes());
         } catch (IOException e) {
             log.error("Failed to send header to {}. Reconnecting...", hugReceiver);
             log.debug("Reason:", e);

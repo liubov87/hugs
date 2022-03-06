@@ -30,7 +30,7 @@ public class HugDistributor {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    private static final Map<URL, List<Hugger>> URL_HUGGER_MAP = new HashMap<>();
+    private static final Map<URL, List<Hugger>> URL_HUGGER_MAP = new ConcurrentHashMap<>();
     private static long lastRefresh = System.currentTimeMillis();
     private static boolean stop = false;
 
@@ -43,9 +43,7 @@ public class HugDistributor {
         List<Hugger> huggers = extend(parseHuggerList(conf), conf.threads()).stream().parallel()
                 .map(url -> {
                     Hugger hugger = new Hugger(url, conf);
-                    synchronized (URL_HUGGER_MAP) {
-                        registerHugger(url, hugger);
-                    }
+                    registerHugger(url, hugger);
                     return hugger;
                 })
                 .collect(toList());
@@ -83,9 +81,7 @@ public class HugDistributor {
         lastRefresh = System.currentTimeMillis();
 
         try {
-        List<URL> updatedUrlList = extend(parseHuggerList(conf), conf.threads());
-
-        synchronized (URL_HUGGER_MAP) {
+            List<URL> updatedUrlList = extend(parseHuggerList(conf), conf.threads());
             if (new HashSet<>(updatedUrlList).equals(URL_HUGGER_MAP.keySet())) {
                 log.info("Target URL list is not changed");
                 return;
@@ -95,8 +91,7 @@ public class HugDistributor {
             urlToRemove.removeAll(updatedUrlList);
             log.info("Removing redundant huggers: {}", urlToRemove);
             for (URL url : urlToRemove) {
-                URL_HUGGER_MAP.getOrDefault(url, Collections.emptyList())
-                    .forEach(Hugger::stop);
+                URL_HUGGER_MAP.getOrDefault(url, Collections.emptyList()).forEach(Hugger::stop);
                 URL_HUGGER_MAP.remove(url);
             }
 
@@ -109,15 +104,13 @@ public class HugDistributor {
 
                 executor.execute(hugger);
             }
-        }
         } catch (Exception e) {
             log.error("Unable to refresh target url list. Keeping old");
         }
     }
 
     private static void registerHugger(URL url, Hugger hugger) {
-        List<Hugger> existingHuggers = URL_HUGGER_MAP.getOrDefault(url,
-            new ArrayList<>());
+        List<Hugger> existingHuggers = URL_HUGGER_MAP.getOrDefault(url, new ArrayList<>());
         existingHuggers.add(hugger);
         URL_HUGGER_MAP.put(url, existingHuggers);
     }
