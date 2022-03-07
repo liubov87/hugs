@@ -1,4 +1,4 @@
-package com.hugs;
+package com.hugs.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -6,6 +6,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class Site {
-    String url;
-    Integer atack;
+    private String url;
+    // spelling mistake here is an external one, can't fix
+    private boolean atack;
 }

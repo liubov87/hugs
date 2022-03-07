@@ -1,8 +1,9 @@
-package com.hugs;
+package com.hugs.service;
 
 import java.io.*;
 import java.net.*;
 
+import com.hugs.Conf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
