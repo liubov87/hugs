@@ -120,7 +120,7 @@ public class UrlRefresh implements Runnable {
     private static List<URL> getUrlsFromJson(String receivers) throws IOException {
         try (InputStream inputStream = getInputStream(receivers)) {
             Site[] sites = OBJECT_MAPPER.readValue(inputStream, Site[].class);
-            log.debug("Raw input: {}", Arrays.asList(sites));
+            log.trace("Raw input: {}", Arrays.asList(sites));
             return Stream.of(sites)
                     .filter(Site::isAtack)
                     .map(Site::getUrl)
